@@ -1,0 +1,6 @@
+[submodule "src/yaml-cpp"]
+	path = src/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "src/cpp-soraxas_toolbox"]
+	path = src/cpp-soraxas_toolbox
+	url = https://github.com/soraxas/cpp-soraxas_toolbox
