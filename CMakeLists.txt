@@ -10,8 +10,8 @@ add_subdirectory(
         src/cpp-soraxas_toolbox
 )
 
-
-add_library(${PROJECT_NAME} INTERFACE)
+include_directories(include)
+add_library(${PROJECT_NAME} src/StaticYamlConfigReader.cpp)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 target_link_libraries(
         ${PROJECT_NAME}
