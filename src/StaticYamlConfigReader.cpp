@@ -2,19 +2,25 @@
 // Created by tin on 3/08/22.
 //
 
-#include "StaticYamlConfigReader.h"
+#include "YamlConfigReader/helpers.h"
 
-YAML::Node sxs::merge_nodes(YAML::Node a, YAML::Node b)
+YAML::Node sxs::merge_nodes(YAML::Node a, YAML::Node b, bool strict)
 {
+    if (!a.IsMap())
+    {
+        //        if (strict)
+        //        {
+        //            std::stringstream ss;
+        //            ss << "The following node does not exists in default config: " << a << b;
+        //            throw std::runtime_error(ss.str());
+        //        }
+        // If a is not a map, merge result is b
+        return b;
+    }
     if (!b.IsMap())
     {
         // If b is not a map, merge result is b, unless b is null
         return b.IsNull() ? a : b;
-    }
-    if (!a.IsMap())
-    {
-        // If a is not a map, merge result is b
-        return b;
     }
     if (!b.size())
     {
@@ -31,7 +37,7 @@ YAML::Node sxs::merge_nodes(YAML::Node a, YAML::Node b)
             auto t = YAML::Node(cnode(b)[key]);
             if (t)
             {
-                c[n.first] = merge_nodes(n.second, t);
+                c[n.first] = merge_nodes(n.second, t, strict);
                 continue;
             }
         }
@@ -42,6 +48,12 @@ YAML::Node sxs::merge_nodes(YAML::Node a, YAML::Node b)
     {
         if (!n.first.IsScalar() || !cnode(c)[n.first.Scalar()])
         {
+            if (strict && !cnode(c)[n.first.Scalar()])
+            {
+                std::stringstream ss;
+                ss << "The following node does not exists in default config: " << n.first;
+                throw std::runtime_error(ss.str());
+            }
             c[n.first] = n.second;
         }
     }

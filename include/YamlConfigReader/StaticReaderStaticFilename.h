@@ -5,23 +5,13 @@
 #ifndef SIMPLE_YMAL_CONFIG_READER_SIMPLEYAMLCONFIGREADER_H
 #define SIMPLE_YMAL_CONFIG_READER_SIMPLEYAMLCONFIGREADER_H
 
-#include <yaml-cpp/yaml.h>
-
 #include <iostream>
 
-#include "soraxas_toolbox/compile_time_dict.h"
+#include "helpers.h"
+#include "soraxas_toolbox/compile_time_string.h"
 
 namespace sxs
 {
-
-    inline const YAML::Node &cnode(const YAML::Node &n)
-    {
-        return n;
-    }
-
-    YAML::Node merge_nodes(YAML::Node a, YAML::Node b);
-
-    /////////////
 
     template <typename Tag, typename Tag2, typename... Args>
     class _ConfigReaderRegisterClass
@@ -43,7 +33,7 @@ namespace sxs
     };
 
     template <typename FileNameWithin64char, typename SecondFileNameWithin64char = void>
-    class StaticConfigReader
+    class StaticConfigReaderStaticFilename
     {
     public:
         template <typename Key, typename T>
@@ -83,7 +73,7 @@ namespace sxs
             return ss.str();
         }
 
-        friend std::ostream &operator<<(std::ostream &_stream, const StaticConfigReader &t)
+        friend std::ostream &operator<<(std::ostream &_stream, const StaticConfigReaderStaticFilename &t)
         {
             _stream << std::string(t);
             return _stream;
@@ -97,7 +87,7 @@ namespace sxs
         }
 
     private:
-        StaticConfigReader() = delete;
+        StaticConfigReaderStaticFilename() = delete;
 
         static auto &_get_filename()
         {
@@ -132,7 +122,7 @@ namespace sxs
 
     template <typename File1, typename File2, typename... Args>
     _ConfigReaderRegisterClass<File1, File2, Args...> _ConfigReaderRegisterClass<File1, File2, Args...>::instance{
-        StaticConfigReader<File1, File2>{}};
+        StaticConfigReaderStaticFilename<File1, File2>{}};
 }  // namespace sxs
 
 #endif  // SIMPLE_YMAL_CONFIG_READER_SIMPLEYAMLCONFIGREADER_H
