@@ -12,12 +12,7 @@ function(target_link_libraries_system target)
   endforeach(lib)
 endfunction(target_link_libraries_system)
 
-add_subdirectory(
-        src/yaml-cpp
-)
-add_subdirectory(
-        src/cpp-soraxas_toolbox
-)
+add_subdirectory(src)
 
 include_directories(include)
 add_library(${PROJECT_NAME} src/StaticYamlConfigReader.cpp)
@@ -25,14 +20,11 @@ target_include_directories(${PROJECT_NAME} INTERFACE include)
 target_link_libraries_system(
         ${PROJECT_NAME}
         yaml-cpp
-)
-target_link_libraries(
-        ${PROJECT_NAME}
         soraxas_toolbox
 )
 
-add_executable(
-        test-config-reader
-        test.cpp
-)
-target_link_libraries(test-config-reader ${PROJECT_NAME})
+# add_executable(
+#         test-config-reader
+#         test.cpp
+# )
+# target_link_libraries(test-config-reader ${PROJECT_NAME})
