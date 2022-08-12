@@ -12,6 +12,7 @@
 
 #include "helpers.h"
 #include "soraxas_toolbox/compile_time_string.h"
+#include "soraxas_toolbox/path.h"
 
 /**
  * USAGE:
@@ -159,6 +160,14 @@ namespace sxs
             return thing;
         }
 
+        template <typename T, typename... Key>
+        static const T get(Key... keys)
+        {
+            auto &&node = accessNode(_get_root(), keys...);
+
+            return node.template as<T>();
+        }
+
         template <class... STR>
         static std::string concatString(const std::string &str1, STR... strs)
         {
@@ -250,13 +259,26 @@ namespace sxs
             static YAML::Node thing = []()
             {
                 const auto &paths = getFilepaths();
-                if (paths.first == "")
+                bool using_default_path = false;
+                auto main_config = paths.first;
+                if (main_config == "")
                 {
-                    throw std::runtime_error("Config file path had not been set yet! "
-                                             "Use set_config_file(...) to set the config file path "
-                                             "prior to the first call to retrieve config.");
+                    main_config = sxs::get_home_dir() + "/staticReaderConfigs.yaml";
+
+                    if (!std::filesystem::exists(main_config))
+                    {
+                        throw std::runtime_error("Config file path had not been set yet! "
+                                                 "Use set_config_file(...) to set the config file path "
+                                                 "prior to the first call to retrieve config. "
+                                                 "I've tried the default path '" +
+                                                 main_config + "' but that does not exists either.");
+                    }
+
+                    //                    throw std::runtime_error("Config file path had not been set yet! "
+                    //                                             "Use set_config_file(...) to set the config file path
+                    //                                             " "prior to the first call to retrieve config.");
                 }
-                auto root = YAML::LoadFile(paths.first);
+                auto root = YAML::LoadFile(main_config);
 
                 // load and merge the second overriding config
                 if (paths.second != "")
