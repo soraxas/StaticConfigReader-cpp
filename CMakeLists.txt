@@ -17,6 +17,7 @@ add_subdirectory(src)
 include_directories(include)
 add_library(${PROJECT_NAME} src/StaticYamlConfigReader.cpp)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
+find_package(yaml-cpp)
 target_link_libraries_system(
         ${PROJECT_NAME}
         yaml-cpp
